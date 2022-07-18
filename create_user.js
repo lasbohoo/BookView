@@ -1,14 +1,15 @@
 const createUser = {
   template: `
   
-  <form @submit.prevent="postData" method="post">
+  <div class="alert alert-success" v-if="isSuccess">Post Created Successfully</div>
+  <form @submit.prevent="postData" >
   <div class="form-group">
     <label for="formGroupExampleInput">First Name</label>
-    <input type="text" class="form-control" name="FirstName" placeholder="First Name" v-model="posts.first_name">
+    <input type="text" class="form-control" name="FirstName" placeholder="First Name" v-model="first_name">
   </div>
   <div class="form-group">
     <label for="formGroupExampleInput2">Last Name</label>
-    <input type="text" class="form-control" id="LastName" placeholder="Last Name" v-model="posts.last_name">
+    <input type="text" class="form-control" id="LastName" placeholder="Last Name" v-model="last_name">
   </div>
   <div class="form-group row">
   <div class="col-sm-10">
@@ -22,20 +23,22 @@ const createUser = {
 
   data() {
     return {
-      posts: {
-        first_name: "",
-        last_name: "",
-      },
+      first_name: "",
+      last_name: "",
+      isSuccess: false,
     };
   },
 
   methods: {
-    async postData() {
-      await axios
-        .post(variables.API_URL + "author", this.posts)
+    postData() {
+      axios
+        .post(variables.API_URL + "author", {
+          first_name: this.first_name,
+          last_name: this.last_name,
+        })
         .then((response) => {
+          this.isSuccess = true;
           console.log(response);
-          this.posts = response.data;
         })
         .catch((err) => {
           console.log(err);
@@ -43,7 +46,7 @@ const createUser = {
     },
   },
 
-  mounted: function () {
-    this.postData();
+  async mounted() {
+    await this.postData();
   },
 };
